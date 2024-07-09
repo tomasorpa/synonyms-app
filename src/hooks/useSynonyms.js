@@ -1,34 +1,33 @@
 import { useState } from "react";
 
 export const useSynonyms = () => {
-  const [word, setWord] = useState("");
   const [synonyms, setSynonyms] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSuccessful, setIsSuccessful] = useState(false);
+  const [word, setWord] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSuccesful, setIsSuccesful] = useState(null);
   const getSynonyms = async (word) => {
-    const response = await fetch(
-      `https://api.datamuse.com/words?rel_syn=${word}`
-    );
-    const data = await response.json();
-    setWord(word);
-    setSynonyms(data);
+    try {
+      const response = await fetch(
+        `https://api.datamuse.com/words?rel_syn=${word}`
+      );
+      const data = await response.json();
+      setSynonyms(data);
+      setWord(word);
+      setIsSuccesful(true);
+    } catch (error) {
+      console.error(error);
+      setIsLoading(false);
+      setIsSuccesful(false);
+    }
   };
-    const handleOnChange = ({ target }) => {
-        const { value } = target;
-        setWord(value);
-        setIsLoading(true)
-    };
-    const handleOnSubmit = (event) => {
-        if(word.trim().length==0)return
-        event.preventDefault();
-        try {
-            getSynonyms(word);
-            setIsLoading(false)
-            setIsSuccessful(true)
-        } catch (error) {
-            setIsSuccessful(false)
-        }
+  const handleOnChange = ({ target }) => {
+    setWord(target.value);
+    setIsSuccesful(null);
+  };
+  const handleOnSubmit = (event) => {
+    event.preventDefault();
+    getSynonyms(word);
   };
 
-  return { handleOnChange, handleOnSubmit, word, synonyms,getSynonyms,isLoading,isSuccessful};
+  return { synonyms, isLoading, isSuccesful, handleOnChange, handleOnSubmit,getSynonyms,word };
 };

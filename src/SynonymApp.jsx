@@ -1,19 +1,18 @@
 import { useSynonyms } from "./hooks/useSynonyms";
-
 function SynonymApp() {
   const {
+    synonyms,
+    isLoading,
+    isSuccesful,
     handleOnChange,
     handleOnSubmit,
-    word,
-    synonyms,
     getSynonyms,
-    isLoading,
-    isSuccessful,
+    word,
   } = useSynonyms();
   return (
     <>
       <form onSubmit={handleOnSubmit}>
-      <h1>Synonyms App</h1>
+        <h1>Synonyms App</h1>
         <input
           type="text"
           placeholder="Search a word"
@@ -29,9 +28,10 @@ function SynonymApp() {
           </li>
         ))}
       </ul>
-      {(synonyms.length == 0 && isSuccessful && !isLoading) && (
+      {isLoading && <p>Is loading</p>}
+      {isSuccesful && synonyms.length < 1 && (
         <p>
-          No synonyms found for <b>{word}</b>
+          No matches found for <b>{word}</b>
         </p>
       )}
     </>
